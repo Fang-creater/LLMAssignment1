@@ -3,7 +3,7 @@ import pickle
 import time
 import psutil
 
-from cs336_basics.train_bpe import train_bpe
+from train_bpe import train_bpe
 
 input_path = r"D:\LLM\Assignment1\data\owt_valid.txt"
 

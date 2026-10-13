@@ -3,9 +3,9 @@ import pickle
 import time
 import psutil
 
-from cs336_basics.train_bpe import train_bpe
+from train_bpe import train_bpe
 
-input_path = r"D:\LLM\Assignment1\data\TinyStoriesV2-GPT4-train.txt"
+input_path = "/mnt/d/LLM/Assignment1/data/TinyStoriesV2-GPT4-valid.txt"
 
 start = time.time()
 vocab,merges = train_bpe(
@@ -21,9 +21,9 @@ print(f"Vocab size: {len(vocab)}")
 longest = max(vocab.values(),key = lambda x:len(x))
 print(f"Longest token: {longest} ({len(longest)} bytes, decoded: {longest.decode('utf-8', errors='replace')})")
 
-with open(r"D:\LLM\Assignment1\data\tinystories_bpe_vocab.pkl","wb") as f:
+with open("/mnt/d/LLM/Assignment1/data/ts_valid_vocab.pkl","wb") as f:
     pickle.dump(vocab,f)
-with open(r"D:\LLM\Assignment1\data\tinystories_bpe_merges.pkl", "wb") as f:
+with open("/mnt/d/LLM/Assignment1/data/ts_valid_merges.pkl", "wb") as f:
     pickle.dump(merges,f)
 
 process = psutil.Process(os.getpid())
