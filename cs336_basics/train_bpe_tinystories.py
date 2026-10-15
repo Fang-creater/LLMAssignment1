@@ -3,7 +3,7 @@ import pickle
 import time
 import psutil
 
-from train_bpe import train_bpe
+from cs336_basics.train_bpe import train_bpe
 
 input_path = "/mnt/d/LLM/Assignment1/data/TinyStoriesV2-GPT4-valid.txt"
 
