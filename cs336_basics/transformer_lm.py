@@ -24,7 +24,8 @@ class TransformerLM(nn.Module):
         self.vocab_size = vocab_size
         self.num_layers = num_layers
         self.token_embedding = Embedding(vocab_size,d_model)
-        self.token_embedding.weight.data = token_embedding_weight.clone()
+        if token_embedding_weight is not None:
+            self.token_embedding.weight.data = token_embedding_weight.clone()
 
         self.layers = nn.ModuleList()
         for layer_idx in range(num_layers):
@@ -59,10 +60,12 @@ class TransformerLM(nn.Module):
             self.layers.append(block)
 
         self.final_norm = RMSNorm(d_model, eps=rmsnorm_eps)
-        self.final_norm.weight.data = final_norm_weight.clone()
+        if final_norm_weight is not None:
+            self.final_norm.weight.data = final_norm_weight.clone()
 
         self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
-        self.lm_head.weight.data = lm_head_weight.clone()
+        if lm_head_weight is not None:
+            self.lm_head.weight.data = lm_head_weight.clone()
 
     def forward(self, token_ids: torch.Tensor) -> torch.Tensor:
         x = self.token_embedding(token_ids)

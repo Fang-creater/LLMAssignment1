@@ -35,10 +35,25 @@ class CausalMultiHeadSelfAttention(nn.Module):
         else:
             self.W_O = nn.Parameter(torch.randn(d_model, d_model) * 0.02)
         '''
-        self.W_Q = nn.Parameter(q_proj_weight.clone())
-        self.W_K = nn.Parameter(k_proj_weight.clone())
-        self.W_V = nn.Parameter(v_proj_weight.clone())
-        self.W_O = nn.Parameter(o_proj_weight.clone())
+        if q_proj_weight is not None:
+            self.W_Q = nn.Parameter(q_proj_weight.clone())
+        else:
+            self.W_Q = nn.Parameter(torch.randn(d_model, d_model) * 0.02)
+
+        if k_proj_weight is not None:
+            self.W_K = nn.Parameter(k_proj_weight.clone())
+        else:
+            self.W_K = nn.Parameter(torch.randn(d_model, d_model) * 0.02)
+
+        if v_proj_weight is not None:
+            self.W_V = nn.Parameter(v_proj_weight.clone())
+        else:
+            self.W_V = nn.Parameter(torch.randn(d_model, d_model) * 0.02)
+
+        if o_proj_weight is not None:
+            self.W_O = nn.Parameter(o_proj_weight.clone())
+        else:
+            self.W_O = nn.Parameter(torch.randn(d_model, d_model) * 0.02)
         self.rope = RotaryPositionalEmbedding(
             theta=theta, d_k=self.d_k,max_seq_len=max_seq_len
         )

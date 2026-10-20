@@ -1,6 +1,7 @@
 """
 Run: cd /mnt/d/LLM/Assignment1/cs336_basics && source /mnt/d/LLM/Assignment1/.venv/bin/activate && python tokenizer_experiments.py
 """
+import os
 import pickle
 import random
 import sys
@@ -16,7 +17,12 @@ OW_VOCAB_PATH = "/mnt/d/LLM/Assignment1/data/owt_valid_vocab.pkl"
 OW_MERGES_PATH = "/mnt/d/LLM/Assignment1/data/owt_valid_merges.pkl"
 TS_CORPUS_PATH = "/mnt/d/LLM/Assignment1/data/TinyStoriesV2-GPT4-valid.txt"
 OW_CORPUS_PATH = "/mnt/d/LLM/Assignment1/data/owt_valid.txt"
-
+'''
+OW_TRAIN_VOCAB_PATH  = "/mnt/d/LLM/Assignment1/data/owt_train_vocab.pkl"
+OW_TRAIN_MERGES_PATH = "/mnt/d/LLM/Assignment1/data/owt_train_merges.pkl"
+OW_TRAIN_CORPUS_PATH = "/mnt/d/LLM/Assignment1/data/owt_train.txt"
+OW_TRAIN_NPY_PATH    = "/mnt/d/LLM/Assignment1/data/owt_train_tokens_uint16.npy"
+'''
 NUM_DOCS = 10
 SEED = 42
 
@@ -30,6 +36,9 @@ def load_tokenizer(vocab_path, merges_path, special_tokens=None):
 print("Loading tokenizers...")
 ts_tok = load_tokenizer(TS_VOCAB_PATH, TS_MERGES_PATH, special_tokens=["<|endoftext|>"])
 ow_tok = load_tokenizer(OW_VOCAB_PATH, OW_MERGES_PATH, special_tokens=["<|endoftext|>"])
+'''
+ow_train_tok = load_tokenizer(OW_TRAIN_VOCAB_PATH, OW_TRAIN_MERGES_PATH,special_tokens=["<|endoftext|>"])
+'''
 print("  Done.")
 
 def sample_documents(corpus_path, n, seed=42):
@@ -107,10 +116,29 @@ print("  Encoding OW validation set (full)...")
 with open(OW_CORPUS_PATH, "r", encoding="utf-8", errors="ignore") as f:
     ow_full = f.read()
 ow_val_ids = ow_tok.encode(ow_full)
+'''
+ow_train_ids = []
+chunk_size = 1024 * 1024
+file_size = os.path.getsize(OW_TRAIN_CORPUS_PATH)
+processed = 0
+t0 = time.time()
 
+with open(OW_TRAIN_CORPUS_PATH, "r", encoding="utf-8", errors="ignore") as f:
+    while True:
+        chunk = f.read(chunk_size)
+        if not chunk:
+            break
+        ids = ow_train_tok.encode(chunk)
+        ow_train_ids.extend(ids)
+        processed += len(chunk.encode("utf-8"))
+        pct = processed / file_size * 100
+        print(f"    {pct:6.1f}%  | {len(ow_train_ids):>12,} tokens | {time.time()-t0:.0f}s")
+'''
 ts_arr = np.array(ts_val_ids, dtype=np.uint16)
 ow_arr = np.array(ow_val_ids, dtype=np.uint16)
-
+'''
+ow_train_arr = np.array(ow_train_ids, dtype=np.uint16)
+'''
 print(f"  TS val: {len(ts_val_ids):,} tokens → {ts_arr.nbytes / 1e6:.1f} MB (uint16)")
 print(f"  OW val: {len(ow_val_ids):,} tokens → {ow_arr.nbytes / 1e6:.1f} MB (uint16)")
 print(f"  Max TS token ID: {max(ts_val_ids):,}  (uint16 max: 65,535)")
@@ -120,4 +148,7 @@ print(f"  Vocab sizes: TS={len(ts_tok.vocab):,}, OW={len(ow_tok.vocab):,}")
 # Save
 np.save("/mnt/d/LLM/Assignment1/data/ts_val_tokens_uint16.npy", ts_arr)
 np.save("/mnt/d/LLM/Assignment1/data/ow_val_tokens_uint16.npy", ow_arr)
+'''
+np.save("/mnt/d/LLM/Assignment1/data/ow_train_tokens_uint16.npy", ow_train_arr)
+'''
 print("  Saved .npy files.")
