@@ -2,7 +2,9 @@ import regex as re
 from collections import defaultdict
 
 PAT = r"""'(?:[sdmt]|ll|ve|re)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""
-
+'''
+PAT = r"""(?:'s|'t|'re|'ve|'m|'ll|'d)| ?\p{L}+| ?\p{N}+| ?[^\s\p{L}\p{N}]+|\s+(?!\S)|\s+"""(use this one)
+'''
 def train_bpe(
     input_path : str,
     vocab_size : int,

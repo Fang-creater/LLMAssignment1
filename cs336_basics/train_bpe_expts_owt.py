@@ -5,7 +5,7 @@ import psutil
 
 from train_bpe2 import train_bpe
 
-input_path = r"/mnt/d/LLM/Assignment1/data/owt_train_10mb.txt"
+input_path = r"/mnt/d/LLM/Assignment1/data/owt_valid_100mb.txt"
 
 start = time.time()
 vocab,merges = train_bpe(
@@ -21,9 +21,9 @@ print(f"Vocab size: {len(vocab)}")
 longest = max(vocab.values(),key = lambda x:len(x))
 print(f"Longest token: {longest} ({len(longest)} bytes, decoded: {longest.decode('utf-8', errors='replace')})")
 
-with open(r"/mnt/d/LLM/Assignment1/data/owt_train_vocab.pkl","wb") as f:
+with open(r"/mnt/d/LLM/Assignment1/data/owt_valid_vocab.pkl","wb") as f:
     pickle.dump(vocab,f)
-with open(r"/mnt/d/LLM/Assignment1/data/owt_train_merges.pkl", "wb") as f:
+with open(r"/mnt/d/LLM/Assignment1/data/owt_valid_merges.pkl", "wb") as f:
     pickle.dump(merges,f)
 
 process = psutil.Process(os.getpid())

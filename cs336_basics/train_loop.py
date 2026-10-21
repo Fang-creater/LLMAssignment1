@@ -51,7 +51,7 @@ if __name__ == "__main__":
 '''
 CPU：
 python train_loop.py \
-  --train_data /mnt/d/LLM/Assignment1/data/ow_val_tokens_uint16.npy \
+  --train_data /mnt/d/LLM/Assignment1/data/owt_train_tokens_uint16.npy \
   --val_data /mnt/d/LLM/Assignment1/data/ow_val_tokens_uint16.npy \
   --checkpoint_dir /mnt/d/LLM/Assignment1/data/ \
   --total_steps 50 \
@@ -66,14 +66,16 @@ python train_loop.py \
 '''
 cuda:0
 python train_loop.py \
-  --train_data /mnt/d/LLM/Assignment1/data/train.npy \
-  --val_data /mnt/d/LLM/Assignment1/data/val.npy \
+  --train_data /mnt/d/LLM/Assignment1/data/owt_train_tokens_uint16.npy \
+  --val_data /mnt/d/LLM/Assignment1/data/ow_val_tokens_uint16.npy \
   --checkpoint_dir /mnt/d/LLM/Assignment1/data/ \
-  --total_steps 50 \
-  --log_interval 5 \
-  --eval_interval 20 \
-  --save_interval 30 \
+  --total_steps 50000 \
   --batch_size 2 \
   --context_length 512 \
+  --log_interval 1000 \
+  --vocab_size 32000 \
+  --d_model 256 \
+  --num_layers 4 \
+  --num_heads 8 \
   --device cuda:0
 '''

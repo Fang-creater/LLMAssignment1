@@ -6,7 +6,7 @@ def log_train(metrics: dict):
         f"loss {metrics['loss']:.4f} | "
         f"lr {metrics['lr']:.2e} | "
         f"{metrics['tokens_per_sec']:.0f} tok/s | "
-        f"{metrics['elapsed']*1000:.1f} ms"
+        f"{metrics['elapsed']*1000:.1f} ms/step "
     )
 
 def log_eval(step: int, val_loss: float):

@@ -15,21 +15,28 @@ def train_step(
     for pg in optimizer.param_groups:
         pg["lr"] = lr
 
-    inputs, targets = run_get_batch(
-        train_data, args.batch_size, args.context_length, args.device
-    )
-    logits = model(inputs)
-    loss = compute_loss(logits, targets)
+    accum_steps = getattr(args, 'gradient_accumulation_steps', 1)
+    total_loss = 0.0
     optimizer.zero_grad()
-    loss.backward()
+
+    for micro_step in range(accum_steps):
+        inputs, targets = run_get_batch(
+            train_data, args.batch_size, args.context_length, args.device
+        )
+        logits = model(inputs)
+        loss = compute_loss(logits, targets)
+        loss = loss / accum_steps
+        loss.backward()
+        total_loss += loss.item()
+
     run_gradient_clipping(model.parameters(), args.max_grad_norm)
     optimizer.step()
     elapsed = time.time() - t0
-    tokens_per_sec = args.batch_size * args.context_length / elapsed
+    tokens_per_sec = args.batch_size * args.context_length * accum_steps / elapsed
 
     return {
         "step": step,
-        "loss": loss.item(),
+        "loss": total_loss,
         "lr": lr,
         "tokens_per_sec": tokens_per_sec,
         "elapsed": elapsed,
