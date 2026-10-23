@@ -32,5 +32,7 @@ def parse_config() -> argparse.Namespace:
     parser.add_argument("--val_data", type=str, default=None)
     parser.add_argument("--checkpoint_dir", type=str, default=r"/mnt/d/LLM/Assignment1/data/checkpoints")
     parser.add_argument("--resume_from", type=str, default=None)
+    parser.add_argument("--log_dir", type=str, default=r"/mnt/d/LLM/Assignment1/data/logs")
+    parser.add_argument("--experiment_name", type=str, default="exp_default")
 
     return parser.parse_args()

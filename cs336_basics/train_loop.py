@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import torch
+import math
 
 from config import parse_config
 from data_layer import create_dataloader
@@ -9,6 +10,7 @@ from train_step import train_step
 from eval_layer import evaluate
 from checkpoint_layer import save_ckpt, load_ckpt
 from log_layer import log_train, log_eval
+from experiment_logger import ExperimentLogger
 
 def main():
     args = parse_config()
@@ -27,16 +29,31 @@ def main():
     if args.resume_from is not None:
         start_step = load_ckpt(model, optimizer, args.resume_from)
 
+    log_dir = getattr(args, 'log_dir', r"/mnt/d/LLM/Assignment1/data/logs")
+    experiment_name = getattr(args, 'experiment_name', 'exp_default')
+    logger = ExperimentLogger(log_dir, experiment_name)
+
     model.train()
     for step in range(start_step, args.total_steps):
         metrics = train_step(step, model, optimizer, train_data, args)
 
         if step % args.log_interval == 0:
             log_train(metrics)
+            logger.log_train_step(
+                step=step,
+                loss=metrics['loss'],
+                lr=metrics['lr'],
+                tokens_per_sec=metrics['tokens_per_sec'],
+            )
 
         if val_data is not None and step % args.eval_interval == 0 and step > 0:
             val_loss = evaluate(model, val_data, args)
             log_eval(step, val_loss)
+            logger.log_eval_step(
+                step=step,
+                val_loss=val_loss,
+                val_ppl=math.exp(val_loss),
+            )
 
         if step % args.save_interval == 0 and step > 0:
             save_ckpt(model, optimizer, step, args.checkpoint_dir)
