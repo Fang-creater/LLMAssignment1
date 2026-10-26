@@ -6,7 +6,7 @@ from tokenizers.decoders import ByteLevel as ByteLevelDecoder
 
 TOKENIZER_DIR = r"/mnt/d/LLM/Assignment1/data/hf_ts_train_tokenizer"
 TEXT_IN = r"/mnt/d/LLM/Assignment1/data/TinyStoriesV2-GPT4-valid.txt"
-NPY_OUT = r"/mnt/d/LLM/Assignment1/data/ts_va;id_tokens_uint16.npy"
+NPY_OUT = r"/mnt/d/LLM/Assignment1/data/ts_valid_tokens_uint16.npy"
 SHARD_DIR = r"/mnt/d/LLM/Assignment1/data/token_shards"
 '''
 TOKENIZER_DIR = r"/mnt/d/LLM/Assignment1/data/hf_owt_train_tokenizer"
@@ -16,7 +16,6 @@ SHARD_DIR = r"/mnt/d/LLM/Assignment1/data/token_shards"
 '''
 os.makedirs(SHARD_DIR, exist_ok=True)
 
-# ---- 加载 tokenizer ----
 print("Loading vocab.json...")
 with open(os.path.join(TOKENIZER_DIR, "vocab.json"), "r", encoding="utf-8") as f:
     vocab = json.load(f)
@@ -37,9 +36,8 @@ tok = Tokenizer(bpe)
 tok.pre_tokenizer = ByteLevel(add_prefix_space=False)
 tok.decoder = ByteLevelDecoder()
 
-# ---- 流式编码 + 分段存盘 ----
-CHUNK = 1 << 20  # 1MB
-SHARD_SIZE = 100_000_000  # 每 1 亿 token 一个 shard
+CHUNK = 1 << 20
+SHARD_SIZE = 100_000_000
 file_size = os.path.getsize(TEXT_IN)
 
 shard_idx = 0
@@ -81,7 +79,6 @@ if current_shard:
     print(f"  💾 Final shard {shard_idx:04d}: {len(arr):,} tokens → {shard_path}")
     shard_idx += 1
 
-# ---- 合并所有 shard（memmap 方式）----
 print(f"\nMerging {shard_idx} shards via memmap...")
 
 total_tokens = 0

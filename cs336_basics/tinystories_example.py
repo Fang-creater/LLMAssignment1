@@ -19,7 +19,7 @@ def main():
         num_layers = 4
         num_heads = 16
         d_ff = 1344
-        context_length = 512
+        context_length = 256
         device = DEVICE
     model = create_model(Args(), DEVICE)
 
@@ -49,7 +49,7 @@ def main():
         temperature=0.8,
         top_p=0.95,
         end_of_text_token_id=eot_id,
-        context_length=512,
+        context_length=256,
         device=DEVICE,
     )
 
@@ -80,7 +80,7 @@ def main():
             temperature=temp,
             top_p=p,
             end_of_text_token_id=eot_id,
-            context_length=512,
+            context_length=256,
             device=DEVICE,
         )
         text = tokenizer.decode(gen)
