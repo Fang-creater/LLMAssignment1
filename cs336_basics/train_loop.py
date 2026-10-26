@@ -83,16 +83,15 @@ python train_loop.py \
 '''
 cuda:0
 python train_loop.py \
-  --train_data /mnt/d/LLM/Assignment1/data/owt_train_tokens_uint16.npy \
-  --val_data /mnt/d/LLM/Assignment1/data/ow_val_tokens_uint16.npy \
-  --checkpoint_dir /mnt/d/LLM/Assignment1/data/ \
-  --total_steps 50000 \
-  --batch_size 2 \
-  --context_length 512 \
-  --log_interval 1000 \
-  --vocab_size 32000 \
-  --d_model 256 \
+  --train_data /mnt/d/LLM/Assignment1/data/ts_train_tokens_uint16.npy \
+  --val_data /mnt/d/LLM/Assignment1/data/ts_valid_tokens_uint16.npy \
+  --vocab_size 10000 \
+  --d_model 512 \
+  --d_ff 1344 \
   --num_layers 4 \
-  --num_heads 8 \
+  --num_heads 16 \
+  --context_length 256 \
+  --total_steps 80000 \
+  --batch_size 16 \
   --device cuda:0
 '''

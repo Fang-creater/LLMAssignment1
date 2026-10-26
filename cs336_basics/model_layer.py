@@ -15,6 +15,7 @@ def create_model(args, device: str) -> torch.nn.Module:
         num_layers=args.num_layers,
         num_heads=args.num_heads,
         d_ff=d_ff,
+        rope_theta=getattr(args, 'rope_theta', 10000.0),
     ).to(device)
     return model
 

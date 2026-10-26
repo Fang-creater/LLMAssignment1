@@ -4,16 +4,16 @@ from tokenizers.models import BPE
 from tokenizers.pre_tokenizers import ByteLevel
 from tokenizers.decoders import ByteLevel as ByteLevelDecoder
 
-'''
-TOKENIZER_DIR = r"/mnt/d/LLM/Assignment1/data/hf_owt_train_tokenizer"
-TEXT_IN = r"/mnt/d/LLM/Assignment1/data/owt_train.txt"
-NPY_OUT = r"/mnt/d/LLM/Assignment1/data/owt_train_tokens_uint16.npy"
+TOKENIZER_DIR = r"/mnt/d/LLM/Assignment1/data/hf_ts_train_tokenizer"
+TEXT_IN = r"/mnt/d/LLM/Assignment1/data/TinyStoriesV2-GPT4-valid.txt"
+NPY_OUT = r"/mnt/d/LLM/Assignment1/data/ts_va;id_tokens_uint16.npy"
 SHARD_DIR = r"/mnt/d/LLM/Assignment1/data/token_shards"
 '''
 TOKENIZER_DIR = r"/mnt/d/LLM/Assignment1/data/hf_owt_train_tokenizer"
 TEXT_IN = r"/mnt/d/LLM/Assignment1/data/owt_valid.txt"
 NPY_OUT = r"/mnt/d/LLM/Assignment1/data/ow_val_tokens_uint16.npy"
 SHARD_DIR = r"/mnt/d/LLM/Assignment1/data/token_shards"
+'''
 os.makedirs(SHARD_DIR, exist_ok=True)
 
 # ---- 加载 tokenizer ----

@@ -10,7 +10,7 @@ input_path = r"/mnt/d/LLM/Assignment1/data/owt_valid_100mb.txt"
 start = time.time()
 vocab,merges = train_bpe(
     input_path = input_path,
-    vocab_size = 32000,
+    vocab_size = 10000,
     special_tokens = ["<|endoftext|>"]
 )
 elapsed = time.time() - start
