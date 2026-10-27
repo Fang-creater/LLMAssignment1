@@ -12,6 +12,8 @@ def parse_config() -> argparse.Namespace:
     parser.add_argument("--rope_theta", type=float, default=10000.0)
     parser.add_argument("--no_rmsnorm", action="store_true", default=False,
                         help="Disable RMSNorm (default: False, i.e. RMSNorm is ON).")
+    parser.add_argument('--no_prenorm', action='store_true',
+                        help='Use post-norm instead of pre-norm')
 
     parser.add_argument("--max_lr", type=float, default=3e-4)
     parser.add_argument("--min_lr", type=float, default=3e-5)

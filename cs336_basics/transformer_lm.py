@@ -19,12 +19,20 @@ class TransformerLM(nn.Module):
                  final_norm_weight: torch.Tensor = None,
                  lm_head_weight: torch.Tensor = None,
                  rmsnorm_eps: float = 1e-5,
-                 use_rmsnorm: bool = True):
+                 use_rmsnorm: bool = True,
+                 use_prenorm: bool = True):
         super().__init__()
 
         self.vocab_size = vocab_size
         self.num_layers = num_layers
         self.token_embedding = Embedding(vocab_size,d_model)
+
+        self.use_prenorm = use_prenorm
+        if not use_prenorm:
+            self.input_norm = RMSNorm(d_model, eps=rmsnorm_eps)
+        else:
+            self.input_norm = nn.Identity()
+
         if token_embedding_weight is not None:
             self.token_embedding.weight.data = token_embedding_weight.clone()
 
@@ -49,6 +57,7 @@ class TransformerLM(nn.Module):
                     norm2_weight=lw.get('norm2_weight'),
                     rmsnorm_eps=rmsnorm_eps,
                     use_rmsnorm=use_rmsnorm,
+                    use_prenorm=use_prenorm,
                 )
             else:
                 block = TransformerBlock(
@@ -75,11 +84,11 @@ class TransformerLM(nn.Module):
 
     def forward(self, token_ids: torch.Tensor) -> torch.Tensor:
         x = self.token_embedding(token_ids)
+        x = self.input_norm(x)
 
         for layer in self.layers:
             x = layer(x)
 
         x = self.final_norm(x)
         logits = self.lm_head(x)
-
         return logits

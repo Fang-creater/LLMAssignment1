@@ -17,10 +17,12 @@ class TransformerBlock(nn.Module):
                  norm1_weight: torch.Tensor = None,
                  norm2_weight: torch.Tensor = None,
                  rmsnorm_eps: float = 1e-5,
-                 use_rmsnorm: bool = True):
+                 use_rmsnorm: bool = True,
+                 use_prenorm: bool = True):
         super().__init__()
 
         self.use_rmsnorm = use_rmsnorm
+        self.use_prenorm = use_prenorm
         self.attn = CausalMultiHeadSelfAttention(
             d_model=d_model,
             num_heads=num_heads,
@@ -56,6 +58,11 @@ class TransformerBlock(nn.Module):
             self.norm2 = nn.Identity()
 
     def forward(self, x: torch.Tensor, token_positions: torch.Tensor = None) -> torch.Tensor:
-        x = x + self.attn(self.norm1(x), token_positions=token_positions)
-        x = x + self.ffn(self.norm2(x))
-        return x
+        if self.use_prenorm:
+            x = x + self.attn(self.norm1(x), token_positions=token_positions)
+            x = x + self.ffn(self.norm2(x))
+            return x
+        else:
+            x = self.norm1(x + self.attn(x, token_positions=token_positions))
+            x = self.norm2(x + self.ffn(x))
+            return x
