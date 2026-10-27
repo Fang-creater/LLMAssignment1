@@ -14,6 +14,8 @@ def parse_config() -> argparse.Namespace:
                         help="Disable RMSNorm (default: False, i.e. RMSNorm is ON).")
     parser.add_argument('--no_prenorm', action='store_true',
                         help='Use post-norm instead of pre-norm')
+    parser.add_argument('--no_rope', action='store_true',
+                        help='Disable RoPE (use NoPE instead)')
 
     parser.add_argument("--max_lr", type=float, default=3e-4)
     parser.add_argument("--min_lr", type=float, default=3e-5)

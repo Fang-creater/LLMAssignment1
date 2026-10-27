@@ -9,7 +9,8 @@ class CausalMultiHeadSelfAttention(nn.Module):
                  q_proj_weight: torch.Tensor = None,
                  k_proj_weight: torch.Tensor = None,
                  v_proj_weight: torch.Tensor = None,
-                 o_proj_weight: torch.Tensor = None):
+                 o_proj_weight: torch.Tensor = None,
+                 use_rope: bool = True):
         super().__init__()
         assert d_model % num_heads == 0
 
@@ -17,6 +18,7 @@ class CausalMultiHeadSelfAttention(nn.Module):
         self.num_heads = num_heads
         self.d_k = d_model // num_heads
         self.d_v = d_model // num_heads
+        self.use_rope = use_rope
         '''
         if q_proj_weight is not None:
             self.W_Q = nn.Parameter(q_proj_weight.clone())
@@ -54,9 +56,10 @@ class CausalMultiHeadSelfAttention(nn.Module):
             self.W_O = nn.Parameter(o_proj_weight.clone())
         else:
             self.W_O = nn.Parameter(torch.randn(d_model, d_model) * 0.02)
-        self.rope = RotaryPositionalEmbedding(
-            theta=theta, d_k=self.d_k,max_seq_len=max_seq_len
-        )
+        if use_rope:
+            self.rope = RotaryPositionalEmbedding(
+                theta=theta, d_k=self.d_k, max_seq_len=max_seq_len
+            )
 
         causal_mask = torch.tril(torch.ones(max_seq_len, max_seq_len)).bool()
         self.register_buffer("causal_mask", causal_mask, persistent=False)
@@ -71,8 +74,9 @@ class CausalMultiHeadSelfAttention(nn.Module):
         V = V.view(batch_size, seq_len, self.num_heads, self.d_v).transpose(1, 2)
         if token_positions is None:
             token_positions = torch.arange(seq_len, device=x.device)
-        Q = self.rope(Q, token_positions)
-        K = self.rope(K, token_positions)
+        if self.use_rope and token_positions is not None:
+            Q = self.rope(Q, token_positions)
+            K = self.rope(K, token_positions)
         mask = self.causal_mask[:seq_len, :seq_len]
         attn_output = scaled_dot_product_attention(Q, K, V, mask=mask)
         attn_output = attn_output.transpose(1, 2).contiguous()

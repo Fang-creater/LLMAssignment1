@@ -10,6 +10,7 @@ def create_model(args, device: str) -> torch.nn.Module:
     d_ff = args.d_ff if args.d_ff is not None else int(8 / 3 * args.d_model)
     use_rmsnorm = not getattr(args, 'no_rmsnorm', False)
     use_prenorm = not getattr(args, 'no_prenorm', False)
+    use_rope = not getattr(args, 'no_rope', False)
     model = TransformerLM(
         vocab_size=args.vocab_size,
         context_length=args.context_length,
@@ -20,6 +21,7 @@ def create_model(args, device: str) -> torch.nn.Module:
         rope_theta=getattr(args, 'rope_theta', 10000.0),
         use_rmsnorm=use_rmsnorm,
         use_prenorm=use_prenorm,
+        use_rope=use_rope,
     ).to(device)
     return model
 

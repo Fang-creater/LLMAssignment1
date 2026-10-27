@@ -20,7 +20,8 @@ class TransformerLM(nn.Module):
                  lm_head_weight: torch.Tensor = None,
                  rmsnorm_eps: float = 1e-5,
                  use_rmsnorm: bool = True,
-                 use_prenorm: bool = True):
+                 use_prenorm: bool = True,
+                 use_rope: bool = True):
         super().__init__()
 
         self.vocab_size = vocab_size
@@ -28,6 +29,8 @@ class TransformerLM(nn.Module):
         self.token_embedding = Embedding(vocab_size,d_model)
 
         self.use_prenorm = use_prenorm
+        self.use_rope = use_rope
+
         if not use_prenorm:
             self.input_norm = RMSNorm(d_model, eps=rmsnorm_eps)
         else:
@@ -58,6 +61,7 @@ class TransformerLM(nn.Module):
                     rmsnorm_eps=rmsnorm_eps,
                     use_rmsnorm=use_rmsnorm,
                     use_prenorm=use_prenorm,
+                    use_rope=use_rope,
                 )
             else:
                 block = TransformerBlock(
@@ -68,6 +72,7 @@ class TransformerLM(nn.Module):
                     theta=rope_theta,
                     rmsnorm_eps=rmsnorm_eps,
                     use_rmsnorm=use_rmsnorm,
+                    use_rope=use_rope,
                 )
             self.layers.append(block)
 

@@ -117,3 +117,8 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+  uv run python train_ablation_prenorm.py --steps 5000 --experiment baseline_prenorm_lr8e4
+  uv run python train_ablation_prenorm.py --steps 5000 --experiment postnorm_lr8e4
+'''

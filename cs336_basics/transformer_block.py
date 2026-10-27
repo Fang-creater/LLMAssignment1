@@ -18,11 +18,14 @@ class TransformerBlock(nn.Module):
                  norm2_weight: torch.Tensor = None,
                  rmsnorm_eps: float = 1e-5,
                  use_rmsnorm: bool = True,
-                 use_prenorm: bool = True):
+                 use_prenorm: bool = True,
+                 use_rope: bool = True):
         super().__init__()
 
         self.use_rmsnorm = use_rmsnorm
         self.use_prenorm = use_prenorm
+        self.use_rope = use_rope
+
         self.attn = CausalMultiHeadSelfAttention(
             d_model=d_model,
             num_heads=num_heads,
@@ -32,6 +35,7 @@ class TransformerBlock(nn.Module):
             k_proj_weight=k_proj_weight,
             v_proj_weight=v_proj_weight,
             o_proj_weight=o_proj_weight,
+            use_rope=use_rope,
         )
         if use_rmsnorm:
             self.norm1 = RMSNorm(d_model, eps=rmsnorm_eps)
