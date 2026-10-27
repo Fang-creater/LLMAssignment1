@@ -8,6 +8,7 @@ from cs336_basics.transformer_lm import TransformerLM
 
 def create_model(args, device: str) -> torch.nn.Module:
     d_ff = args.d_ff if args.d_ff is not None else int(8 / 3 * args.d_model)
+    use_rmsnorm = not getattr(args, 'no_rmsnorm', False)
     model = TransformerLM(
         vocab_size=args.vocab_size,
         context_length=args.context_length,
@@ -16,6 +17,7 @@ def create_model(args, device: str) -> torch.nn.Module:
         num_heads=args.num_heads,
         d_ff=d_ff,
         rope_theta=getattr(args, 'rope_theta', 10000.0),
+        use_rmsnorm=use_rmsnorm,
     ).to(device)
     return model
 

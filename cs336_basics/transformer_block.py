@@ -16,9 +16,11 @@ class TransformerBlock(nn.Module):
                  w2_weight: torch.Tensor = None,
                  norm1_weight: torch.Tensor = None,
                  norm2_weight: torch.Tensor = None,
-                 rmsnorm_eps: float = 1e-5):
+                 rmsnorm_eps: float = 1e-5,
+                 use_rmsnorm: bool = True):
         super().__init__()
 
+        self.use_rmsnorm = use_rmsnorm
         self.attn = CausalMultiHeadSelfAttention(
             d_model=d_model,
             num_heads=num_heads,
@@ -29,9 +31,12 @@ class TransformerBlock(nn.Module):
             v_proj_weight=v_proj_weight,
             o_proj_weight=o_proj_weight,
         )
-        self.norm1 = RMSNorm(d_model, eps=rmsnorm_eps)
-        if norm1_weight is not None:
-            self.norm1.weight.data = norm1_weight.clone()
+        if use_rmsnorm:
+            self.norm1 = RMSNorm(d_model, eps=rmsnorm_eps)
+            if norm1_weight is not None:
+                self.norm1.weight.data = norm1_weight.clone()
+        else:
+            self.norm1 = nn.Identity()
 
         self.ffn = PositionwiseFeedForward(
             d_model=d_model,
@@ -43,9 +48,12 @@ class TransformerBlock(nn.Module):
             self.ffn.w3.data = w3_weight.clone()
         if w2_weight is not None:
             self.ffn.w2.data = w2_weight.clone()
-        self.norm2 = RMSNorm(d_model, eps=rmsnorm_eps)
-        if norm2_weight is not None:
-            self.norm2.weight.data = norm2_weight.clone()
+        if use_rmsnorm:
+            self.norm2 = RMSNorm(d_model, eps=rmsnorm_eps)
+            if norm2_weight is not None:
+                self.norm2.weight.data = norm2_weight.clone()
+        else:
+            self.norm2 = nn.Identity()
 
     def forward(self, x: torch.Tensor, token_positions: torch.Tensor = None) -> torch.Tensor:
         x = x + self.attn(self.norm1(x), token_positions=token_positions)

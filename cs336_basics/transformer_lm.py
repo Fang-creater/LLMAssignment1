@@ -18,7 +18,8 @@ class TransformerLM(nn.Module):
                  layers_weights: list = None,
                  final_norm_weight: torch.Tensor = None,
                  lm_head_weight: torch.Tensor = None,
-                 rmsnorm_eps: float = 1e-5):
+                 rmsnorm_eps: float = 1e-5,
+                 use_rmsnorm: bool = True):
         super().__init__()
 
         self.vocab_size = vocab_size
@@ -47,6 +48,7 @@ class TransformerLM(nn.Module):
                     norm1_weight=lw.get('norm1_weight'),
                     norm2_weight=lw.get('norm2_weight'),
                     rmsnorm_eps=rmsnorm_eps,
+                    use_rmsnorm=use_rmsnorm,
                 )
             else:
                 block = TransformerBlock(
@@ -56,12 +58,16 @@ class TransformerLM(nn.Module):
                     max_seq_len=context_length,
                     theta=rope_theta,
                     rmsnorm_eps=rmsnorm_eps,
+                    use_rmsnorm=use_rmsnorm,
                 )
             self.layers.append(block)
 
-        self.final_norm = RMSNorm(d_model, eps=rmsnorm_eps)
-        if final_norm_weight is not None:
-            self.final_norm.weight.data = final_norm_weight.clone()
+        if use_rmsnorm:
+            self.final_norm = RMSNorm(d_model, eps=rmsnorm_eps)
+            if final_norm_weight is not None:
+                self.final_norm.weight.data = final_norm_weight.clone()
+        else:
+            self.final_norm = nn.Identity()
 
         self.lm_head = nn.Linear(d_model, vocab_size, bias=False)
         if lm_head_weight is not None:

@@ -10,6 +10,8 @@ def parse_config() -> argparse.Namespace:
     parser.add_argument("--num_heads", type=int, default=16)
     parser.add_argument("--d_ff", type=int, default=1344)
     parser.add_argument("--rope_theta", type=float, default=10000.0)
+    parser.add_argument("--no_rmsnorm", action="store_true", default=False,
+                        help="Disable RMSNorm (default: False, i.e. RMSNorm is ON).")
 
     parser.add_argument("--max_lr", type=float, default=3e-4)
     parser.add_argument("--min_lr", type=float, default=3e-5)
