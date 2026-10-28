@@ -16,6 +16,8 @@ def parse_config() -> argparse.Namespace:
                         help='Use post-norm instead of pre-norm')
     parser.add_argument('--no_rope', action='store_true',
                         help='Disable RoPE (use NoPE instead)')
+    parser.add_argument('--no_swiglu', action='store_true',
+                        help='Disable SwiGLU (use FFNSiLU instead, d_ff=4*d_model)')
 
     parser.add_argument("--max_lr", type=float, default=3e-4)
     parser.add_argument("--min_lr", type=float, default=3e-5)

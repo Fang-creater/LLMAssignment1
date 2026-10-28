@@ -7,10 +7,14 @@ from tests.adapters import (
 from cs336_basics.transformer_lm import TransformerLM
 
 def create_model(args, device: str) -> torch.nn.Module:
-    d_ff = args.d_ff if args.d_ff is not None else int(8 / 3 * args.d_model)
     use_rmsnorm = not getattr(args, 'no_rmsnorm', False)
     use_prenorm = not getattr(args, 'no_prenorm', False)
     use_rope = not getattr(args, 'no_rope', False)
+    use_swiglu = not getattr(args, 'no_swiglu', False)
+    if use_swiglu:
+        d_ff = args.d_ff if args.d_ff is not None else int(8 / 3 * args.d_model)
+    else:
+        d_ff = 4 * args.d_model
     model = TransformerLM(
         vocab_size=args.vocab_size,
         context_length=args.context_length,
@@ -22,6 +26,7 @@ def create_model(args, device: str) -> torch.nn.Module:
         use_rmsnorm=use_rmsnorm,
         use_prenorm=use_prenorm,
         use_rope=use_rope,
+        use_swiglu=use_swiglu,
     ).to(device)
     return model
 

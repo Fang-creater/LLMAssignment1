@@ -19,12 +19,14 @@ class TransformerBlock(nn.Module):
                  rmsnorm_eps: float = 1e-5,
                  use_rmsnorm: bool = True,
                  use_prenorm: bool = True,
-                 use_rope: bool = True):
+                 use_rope: bool = True,
+                 use_swiglu: bool = True):
         super().__init__()
 
         self.use_rmsnorm = use_rmsnorm
         self.use_prenorm = use_prenorm
         self.use_rope = use_rope
+        self.use_swiglu = use_swiglu
 
         self.attn = CausalMultiHeadSelfAttention(
             d_model=d_model,
@@ -47,6 +49,7 @@ class TransformerBlock(nn.Module):
         self.ffn = PositionwiseFeedForward(
             d_model=d_model,
             d_ff=d_ff,
+            use_swiglu=use_swiglu,
         )
         if w1_weight is not None:
             self.ffn.w1.data = w1_weight.clone()
