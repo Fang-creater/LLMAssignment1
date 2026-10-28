@@ -1,0 +1,7 @@
+{
+  "model_max_length": 1024,
+  "eos_token": "<|endoftext|>",
+  "bos_token": "<|endoftext|>",
+  "unk_token": null,
+  "pad_token": null
+}
