@@ -21,7 +21,8 @@ class TransformerLM(nn.Module):
                  rmsnorm_eps: float = 1e-5,
                  use_rmsnorm: bool = True,
                  use_prenorm: bool = True,
-                 use_rope: bool = True):
+                 use_rope: bool = True,
+                 use_swiglu: bool = True):
         super().__init__()
 
         self.vocab_size = vocab_size
@@ -30,6 +31,7 @@ class TransformerLM(nn.Module):
 
         self.use_prenorm = use_prenorm
         self.use_rope = use_rope
+        self.use_swiglu = use_swiglu
 
         if not use_prenorm:
             self.input_norm = RMSNorm(d_model, eps=rmsnorm_eps)
@@ -62,6 +64,7 @@ class TransformerLM(nn.Module):
                     use_rmsnorm=use_rmsnorm,
                     use_prenorm=use_prenorm,
                     use_rope=use_rope,
+                    use_swiglu=use_swiglu,
                 )
             else:
                 block = TransformerBlock(
@@ -73,6 +76,7 @@ class TransformerLM(nn.Module):
                     rmsnorm_eps=rmsnorm_eps,
                     use_rmsnorm=use_rmsnorm,
                     use_rope=use_rope,
+                    use_swiglu=use_swiglu,
                 )
             self.layers.append(block)
 
